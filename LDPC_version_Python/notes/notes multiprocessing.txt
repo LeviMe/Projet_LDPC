@@ -1,0 +1,61 @@
+
+References processeur.
+J'ai 4 coeurs.
+
+
+https://ark.intel.com/content/www/us/en/ark/products/149091/intel-core-i78565u-processor-8m-cache-up-to-4-60-ghz.html
+
+
+ how to harness all available CPU power to tackle a particular problem
+ 
+ N : nombre de calcul par process. 
+ At higher values of N, we received an approximate 2x decrease in computation time for 2 cores. 
+ At lower values of N, no proportional decrease in work, and in most cases, worse; <= additional overhead we’re adding 
+ 
+ 
+ 
+ Utiliser pool 
+ solution la plus simple quand une seule fonction est impliquée. Quasiment pas de différence avec process. 
+ 
+ from multiprocessing import Pool
+ 
+ #Un objet pool va déléguer la fonction à plusieurs process
+ 
+ pool = Pool(processes=4)
+
+#l'appel de la fonction map va déclencher plusieurs process de la fonction appelée avec les arguments respectifs dans un vecteur, et renvoyer un vecteur contenant les résultats.
+
+results = pool.map(doWork, (N/4,N/4,N/4,N/4))
+
+
+C'est ce vecteur qui sera employé par le process principal pour produire le résultat cumulé.
+
+
+------------------
+Lecture de
+https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing.pool
+
+
+utiliser la classe Process
+
+Object process: créer un process séparé. Lancer par la commande start. 
+UN peu plus lourd d'utilisation 
+
+
+-----------------------------------
+
+
+Lancement de la simulation 
+amélioration notable 2000 failures en 93 s. 
+
+
+Problème sur la génération de nombre aléatoires. 
+
+https://stackoverflow.com/questions/9209078/using-python-multiprocessing-with-different-random-seed-for-each-process
+
+
+
+
+
+
+

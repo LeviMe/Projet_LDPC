@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Tue Jan 24 11:12:57 2023
+Quartus Prime Version : 21.1.0 Build 842 10/21/2021 SJ Lite Edition
+Revision Name : LDPC_0
+Top-level Entity Name : test_clk_divider
+Family : Cyclone IV E
+Total logic elements : 10
+    Total combinational functions : 9
+    Dedicated logic registers : 8
+Total registers : 8
+Total pins : 2
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

@@ -1,0 +1,137 @@
+
+library ieee; 
+use ieee.std_logic_1164.all;
+use std.textio.all;
+
+
+-- pris isolément, le module nécessite 1259 unité logiques, contre 1389 pour encoder3.
+
+entity encoder2 is 
+
+generic (
+	constant L0 :  std_logic_vector(127 downto 0):= x"7546f665fbf07eec75902581e7ebd072";
+	constant L32 : std_logic_vector(127 downto 0):= x"c196638a4bfe987179a486f304419ca2";
+	constant L64 : std_logic_vector(127 downto 0):= x"a1ecd4631cd81a9d8f0db2506ddad1d2";
+	constant L96 : std_logic_vector(127 downto 0):= x"f5ea237904bd6e24b41212b8e73d62c5"
+);
+
+port (
+	input :  in std_logic_vector(127 downto 0);
+	output : out std_logic_vector(255 downto 0);
+	clk, valid_in : in std_logic :='0';
+	clk2_out, valid_out, busy : out std_logic :='0'
+);
+
+end encoder2; 
+
+architecture behavioral of encoder2 is
+	 function sum_xor (
+		 in_vec    : in std_logic_vector)
+		 return std_logic is
+		 variable s : std_logic := '0';
+		 begin
+			 for i in in_vec'low to in_vec'high loop 
+					s := s xor in_vec(i);
+			 end loop;
+		 return s;  
+	  end function sum_xor;
+	  
+ 	function shift_circ_r(
+		L: in std_logic_vector; index : in integer)
+		return std_logic_vector is
+		variable size: integer := L'Length;
+		variable res : std_logic_vector(size-1 downto 0) := (others => '0');
+		begin
+			res := L(size-1-index downto 0) & L(size-1 downto size-index);
+		return res;
+	end function shift_circ_r;
+	
+	
+	function circular_perm4(L : in std_logic_vector; index : in integer := 0)
+	return  std_logic_vector is	
+		variable  res : 	std_logic_vector(127 downto 0) := (others => '0');
+		variable  mot :  	std_logic_vector(31  downto 0) := (others => '0');
+		variable  mot_per :  	std_logic_vector(31  downto 0) := (others => '0');
+		begin 
+			decomp : for i in 0 to 3 loop
+							mot := L((i+1)*32 -1 downto i*32); 
+							mot_per := shift_circ_r(mot, index); 
+							res((i+1)*32 - 1 downto i*32) := mot_per;
+			end loop decomp;
+			return res;
+	end function;
+	
+
+	signal V_0_31 : 	 std_logic_vector(127 downto 0) := L0;
+	signal V_32_63 :   std_logic_vector(127 downto 0) := L32;
+	signal V_64_95 : 	 std_logic_vector(127 downto 0) := L64;
+	signal V_96_127 :  std_logic_vector(127 downto 0) := L96;
+	signal state :     integer range 0 to 50 := 0;
+	signal index : 	 integer range 0 to 50 := 0;
+	signal s_droite :  std_logic_vector(127 downto 0) := (others => '0');
+	signal upd_signal :std_logic := '0';
+	
+	signal count_clk : integer range 0 to 32768;
+	signal clk2: std_logic:='0';
+	signal latch_clk2 : std_logic_vector(1 downto 0) := b"00";
+
+	
+begin
+	
+	clk_divider : process(clk)
+	begin
+	if (rising_edge(clk)) then
+		count_clk <= count_clk + 1;
+		if (count_clk = 4) then 
+			count_clk <= 0;
+			clk2 <= not clk2;
+		end if;
+	end if;
+	end process clk_divider;
+	
+	clk2_out <= clk2;
+
+	prod1: process(upd_signal)
+	begin 		
+			s_droite(index)	 	 <=  sum_xor(input and V_0_31);
+			--s_droite(index + 32)  <=  sum_xor(input and V_32_63);
+			--s_droite(index + 64)  <=  sum_xor(input and V_64_95); 
+			--s_droite(index + 96)  <=  sum_xor(input and V_96_127);
+	end process prod1;
+
+	main : process(clk)
+	begin
+	latch_clk2 <= latch_clk2(0) & clk2;
+	
+	if (latch_clk2 = b"01") then
+		report "state " & integer'image(state) & std_logic'image(valid_in);
+		if (valid_in = '1' and state = 0) then
+			
+			busy <= '1'; state <= 1; index <= 0; 
+			upd_signal <= not upd_signal;
+		end if;
+		
+		if (0<state and state<33) then	
+			V_0_31 <= circular_perm4(V_0_31,  1);-- V_32_63  <= circular_perm4(V_32_63, 1); 
+		--	V_64_95<= circular_perm4(V_64_95, 1); V_96_127 <= circular_perm4(V_96_127,1); 
+			state <= state + 1; index <= index + 1;
+		end if;
+		
+		if (0<state and index<31) then 
+			upd_signal <= not upd_signal; --anticipation: lorsque l'indice n'est pas dernier index<32, anticipé en index<31.		
+		end if;
+		
+		if (state = 33) then 
+			output <= s_droite & input;
+			valid_out <= '1'; state <= state + 1;
+		end if;
+		
+		if (state = 34) then 
+			state <= 0; busy <='0'; valid_out <= '0';
+		end if;
+	end if;
+				
+	end process main;
+	
+	
+end behavioral;

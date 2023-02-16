@@ -1,0 +1,182 @@
+m255
+K4
+z2
+Z0 !s99 nomlopt
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+R0
+!s11e vcom 2021.2 2021.04, Apr 14 2021
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z1 d/home/levi/intelFPGA_lite/21.1/LDPC_0/simulation/modelsim
+T_opt
+!s110 1668964966
+V8>g3<7kI8ICeo]beNFoKP0
+Z2 04 9 2 work ldpc_tb_1 tb 1
+=1-000ae431a4f1-637a6266-a234e-20f5a
+Z3 !s124 OEM10U2 
+Z4 o-quiet -auto_acc_if_foreign -work work -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L cycloneive -L rtl_work -L work +acc
+Z5 tCvgOpt 0
+n@_opt
+Z6 OL;O;2021.2;73
+R1
+T_opt1
+Z7 !s110 1670506731
+VcDOzCh9f3QjVP[2_Yl0@I0
+R2
+=1-000ae431a4f1-6391e8eb-4e3a9-1c080
+R3
+R4
+R5
+n@_opt1
+R6
+Eencoder2
+Z8 w1670506587
+Z9 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z10 DPx4 ieee 14 std_logic_1164 0 22 cVAk:aDinOX8^VGI1ekP<3
+!i122 0
+R1
+Z11 8/home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd
+Z12 F/home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd
+l0
+L9 1
+Vi4>cARodB`1ZS4Qzm9GTC0
+!s100 UiPd02f:L?][HJ3>aSVQi0
+Z13 OL;C;2021.2;73
+33
+R7
+!i10b 1
+Z14 !s108 1670506730.000000
+Z15 !s90 -reportprogress|300|-2008|-work|work|/home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd|
+Z16 !s107 /home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd|
+!i113 0
+Z17 o-2008 -work work
+Z18 tExplicit 1 CvgOpt 0
+Abehavioral
+R9
+R10
+Z19 DEx4 work 8 encoder2 0 22 i4>cARodB`1ZS4Qzm9GTC0
+!i122 0
+l79
+L27 109
+V=QFeAGEcRzFTYPfRPK8NR2
+!s100 W@<4<9H:Q:1oWU_PDT7A92
+R13
+33
+R7
+!i10b 1
+R14
+R15
+R16
+!i113 0
+R17
+R18
+Eldpc_tb_1
+Z20 w1670406363
+Z21 DPx4 ieee 16 std_logic_textio 0 22 8]8<fKiYoHe;_IDO3kmNH2
+R9
+R10
+!i122 1
+R1
+Z22 8/home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd
+Z23 F/home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd
+l0
+L7 1
+VQ^XnH`9l_R_79gJ=9mnlk2
+!s100 BeDR9CbH2_c@ONVR:@1X[0
+R13
+33
+R7
+!i10b 1
+Z24 !s108 1670506731.000000
+Z25 !s90 -reportprogress|300|-2008|-work|work|/home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd|
+Z26 !s107 /home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd|
+!i113 0
+R17
+R18
+Atb
+R19
+R21
+R9
+R10
+DEx4 work 9 ldpc_tb_1 0 22 Q^XnH`9l_R_79gJ=9mnlk2
+!i122 1
+l20
+L11 49
+VaU=1KT:fMjiDSVngb]=ao2
+!s100 m1WaX^b[0FB9CGIPfZZ0d1
+R13
+33
+R7
+!i10b 1
+R24
+R25
+R26
+!i113 0
+R17
+R18

@@ -1,0 +1,82 @@
+# //  Questa Intel Starter FPGA Edition-64
+# //  Version 2021.2 linux_x86_64 Apr 14 2021
+# //
+# //  Copyright 1991-2021 Mentor Graphics Corporation
+# //  All Rights Reserved.
+# //
+# //  QuestaSim and its associated documentation contain trade
+# //  secrets and commercial or financial information that are the property of
+# //  Mentor Graphics Corporation and are privileged, confidential,
+# //  and exempt from disclosure under the Freedom of Information Act,
+# //  5 U.S.C. Section 552. Furthermore, this information
+# //  is prohibited from disclosure under the Trade Secrets Act,
+# //  18 U.S.C. Section 1905.
+# //
+# do LDPC_0_run_msim_rtl_vhdl.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# ** Warning: (vdel-134) Unable to remove locked optimized design "_opt".  Locker is levi@levi-Inspiron-5584.
+# vlib rtl_work
+# ** Warning: (vlib-34) Library already exists at "rtl_work".
+# Errors: 0, Warnings: 1
+# vmap work rtl_work
+# Questa Intel Starter FPGA Edition-64 vmap 2021.2 Lib Mapping Utility 2021.04 Apr 14 2021
+# vmap work rtl_work 
+# Copying /home/levi/intelFPGA_lite/21.1/questa_fse/linux_x86_64/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vcom -2008 -work work {/home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd}
+# Questa Intel Starter FPGA Edition-64 vcom 2021.2 Compiler 2021.04 Apr 14 2021
+# Start time: 14:38:50 on Dec 08,2022
+# vcom -reportprogress 300 -2008 -work work /home/levi/intelFPGA_lite/21.1/LDPC_0/encoder2.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity encoder2
+# -- Compiling architecture behavioral of encoder2
+# End time: 14:38:51 on Dec 08,2022, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# 
+# vcom -2008 -work work {/home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd}
+# Questa Intel Starter FPGA Edition-64 vcom 2021.2 Compiler 2021.04 Apr 14 2021
+# Start time: 14:38:51 on Dec 08,2022
+# vcom -reportprogress 300 -2008 -work work /home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_textio
+# -- Compiling entity LDPC_tb_1
+# -- Compiling architecture tb of LDPC_tb_1
+# -- Loading entity encoder2
+# End time: 14:38:51 on Dec 08,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L cycloneive -L rtl_work -L work -voptargs="+acc"  LDPC_tb_1
+# vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L cycloneive -L rtl_work -L work -voptargs=""+acc"" LDPC_tb_1 
+# Start time: 14:38:51 on Dec 08,2022
+# ** Note: (vsim-3812) Design is being optimized...
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_textio(body)
+# Loading work.ldpc_tb_1(tb)#1
+# Loading work.encoder2(behavioral)#1
+# ** Warning: (vsim-8683) Uninitialized out port /ldpc_tb_1/testb/output(255 downto 0) has no driver.
+# This port will contribute value (256'hXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX) to the signal network.
+# 
+# add wave *
+# view structure
+# .main_pane.structure.interior.cs.body.struct
+# view signals
+# .main_pane.objects.interior.cs.body.tree
+# run -all
+# ** Note: demarrage
+#    Time: 0 ps  Iteration: 0  Instance: /ldpc_tb_1
+# ** Failure: Assertion violation.
+#    Time: 50050 ps  Iteration: 0  Process: /ldpc_tb_1/clock_process File: /home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd
+# Break in Process clock_process at /home/levi/intelFPGA_lite/21.1/LDPC_0/LDPC_tb_1.vhd line 32
+# 
+# stdin: <EOF>
+# End time: 18:08:11 on Dec 08,2022, Elapsed time: 3:29:20
+# Errors: 1, Warnings: 1

@@ -1,0 +1,263 @@
+
+# utf-8 -*-
+"""
+Created on Sat Oct 22 21:49:54 2022
+
+@author: levi
+"""
+
+
+22.10 à 22:00
+
+Trouver matrice encodage. 
+
+Prendre la doc CCSDS:
+SHORT BLOCK LENGTH LDPC CODES FOR TC SYNCHRONIZATION AND CHANNEL CODING
+
+
+trois matrices à rate 1/2 avec k = 64, 128, 256
+courbes de performances disponibles pour les comparaisons.
+
+on prend pour le moment la 128, 256
+terminé et testé à 23:46
+
+
+--------------------------------
+encodeur 
+
+
+inversion de la matrice, la demi de portion droite.
+commencé le 23.10 à 9h.
+pause à 10h.
+
+terminé vers 13h.
+
+Affichage de la demi-matrice G en hexa pour valider sa description du document. 
+validée à 14h30.
+Fin travail 15h. 
+
+
+Tentative d'optimiser le produit matriciel. 
+24.10 à 10h
+
+    1. problème: np ne fournit pas de type primitif binaire pour l'addition. 
+    Le minimum pour les nombres c'est uint8. 
+    2. Le type bool peut se multiplier avec np.dot, mais l'addition n'est pas modulo 2. (en réalité >1)
+    3. Tentative: Créer un sous-type de  np.array pour avoir un type de matrice binaire
+    qui fait l'addtion et la multiplication modulo 2. 
+    4. Test avec une classe similaire appelé b_matrix. 
+    5. Echec complet des tests. Le produit matriciel n'a plus les optimisations natives 
+    de numpy, code machine que partiel. Vitesse de calcul 20000 fois inférieure. 
+    6. solution: créer les matrices avec np.uint8 et le produit avec np.dot(., .)%2. 
+    quelle que soit la taille de la matrice, on pourra employer le plus petit type: l'addition
+    de deux uint8 est toujours modulo 256, ce qui fait qu'il n'y a pas de perte d'information en cas d'overflow
+    puisque l'on recherche modulo 2.
+    
+Completé à 12:00
+    
+
+# nota: le gain de temps d'execution pour le produit entre deux np.uint8 et deux np.uint16 est d'environ 2%. 
+Quasiment rien de significatif.
+
+Le uint64 est même plus rapide que tous les autres pour le produit en code Python.
+Parfois à 30%. POssiblement mieux optimisé que les autres. 
+Sur Stackoverflow, on trouve la raison pour un cas similaire, qui traite des additions avec np.sum. 
+
+https://stackoverflow.com/questions/70134026/no-speedup-when-summing-uint16-vs-uint64-arrays-with-numpy
+
+Pour le produit matriciel avec des valeurs binaires en code machine:
+np.uint8 est environ 30% plus rapide que le int64 et sera donc retenu
+pour le restant de ce projet.
+
+--------------------------------
+
+
+Preparation décodeur 
+
+------------------------
+
+    calcul du logarithme
+    
+    algo en C disponible ici: Traite de la précision et du calcul par série
+    https://github.com/JuliaMath/openlibm/blob/master/src/e_log.c
+    Explication de l'algo de Remez ici
+    https://gist.github.com/dhermes/105da2a3c9861c90ea39
+    
+    
+    
+    se ramener au calcul de ln(1+s) - ln(1-s) pour eliminer la moitié des coefficients.
+    Algorithme de Remez permet de trouver une fonction polynomiale plus précise de degre 14
+    pour calculer les coefficients à l'exception du premier. 
+    Erreur garantie inférieure à 2^(-58.45)
+    
+    
+    Avancé le 24.10 de 22h à 1h du matin. 
+    Tests de performance.
+    test sur le DL classique, DL de atanh, calcul avec LUT, pour au final constater que 
+    le np.log est de 4 ordres de grandeurs plus rapide que toutes les alternatives possibles. 
+    LUT peut être utile pour mesurer performances en simulation si usage sur le FPGA
+    
+    ----------------------------
+    Encodeur classe
+    création d'un fichier commun (pour le moment avec encodeur et décodeur)
+    Chargement des matrices et des informations utiles à partir de la classe LDPC_matrices
+    (peut être renommé en _builder, ou autres puisque plus que deux matrices)
+    décodeur avec calcul de symptome, pour les tests initiaux. (validée)
+    encodage terminé et validé.
+    
+    
+    Avancé le 25.10 de 11h55 à 13h30
+    ----------------------------
+    
+    decodeur
+    
+    
+    difficulité: échange de message. 
+    Attention au risque de reprise du code du stage si posté sur github; 
+    Créer deux tableaux aux nombres des arrêtes un pour chaque direction.
+    Fait. 
+    
+    une mise à jour = un remplissage d'un tableau indexé sur les arrêtes.
+     
+    
+    pas possible un passage par reference: emploi de tableau
+    pas de LUT dans un premier temps, les fonctions de np sont de très loin les plus rapide.      
+        
+        
+    reprise 16h
+    Création d'un code 4,8 
+    nécessité de valider chaque branche au cas par cas. Très long 
+    voir comment simplifier 
+    
+    avancé autour de 20h. 
+    Fin vers 23h. Le code n'est toujours pas terminé.
+    Un bug empeche le bon calcul des LLR.
+    
+    reprise 28.10 à 10h. 
+    Une correction sur les LLR de départ permet au code de fonctionner. 
+    
+    Première simulation sur un point (2000 trials, sigma = .7)
+    validée en principe par la documentation. 
+    
+    
+    Refactoring du code pour plus de clarté.
+    Retrait de l'information redondante dans le cas des matrices. 
+    Arrêt à 14h. 
+    
+    Pour la suite. 
+    Faire passer les tests dans un fichier séparé.
+    Lancer la simulation sur de multiples points pour la validation définitive.
+    Essayer d'implémenter le min* pour se rapprocher de l'implémentation de la doc. 
+    Rapprocher toute la nomenclature du celle de la littérature sci anglophone pour mise en ligne.
+    
+    bug i LLR
+    L'init des LLR est appelé information extrinsèque, notée I_j. Dans la notation de
+    de Berou et d'autres, j indexe le VN, p indexe le PN.
+    P(j) ensemble des parités du VN j, J(p) l'inverse.
+    
+    
+    la formule démontrée dans le rapport de stage est juste mais elle 
+    pouvait être développée et réduite, ce que je n'ai alors pas fait.
+    LLR_0(y_i) = ((y_i-1)^2 - (y_i+1))/(2sigma^2) = -4yi/(2sigma^2) = -2yi/sigma^2
+    on prend le signe opposé avec ma modulation qui est (1-> +1) (0 -> -1)
+    
+    ------------------------------
+    Reprise 29 octobre à 21h
+    
+    découverte du profiler 
+    python3 -m cProfile test0.py
+    possibilité de passer à 200 trials seulement pour les tests de perf  
+    actuellement 2000 qui finissent en 13 mn. (sigma = .7)
+    
+    Le profiler de spyder est plus précis mais je n'ai pas totalement compris son fonctionnement
+    (affichage retardé). Probablement la même fonction qui est appelée.
+    
+    
+    Pause 22h-23h15 (formule 1)
+    
+    Essai du min-sum 
+        nécessité de trouver le facteur de correction adequat
+        
+    Essai du min* une seul ligne à modifier dans la fonction. 
+        pas encore fait
+    fin à 1h du matin.
+    
+    
+    ---------------------
+    Reprise 30 octobre à  8h30
+    amélioration de la complexité. 
+    Réduire l'iter max à 100 plutôt que 200. Net amélioration en temps 
+    pour une perte marginal en perf de décodage.
+    tableur pour les resultats profilers.
+    
+    Evaluation multiprocessing à 10h40
+    
+    Programmé séparé pour faire simulation multipoints et multi-coeur à partir de 
+    15h20.
+    
+    Lancement de la simulation sur 4 points. 
+    Arrêt 16h30
+    
+    Processeur 4 coeurs. 
+    
+    ----------------------------
+    
+    1 novembre
+    avancé sur le tracé des graphiques pour vérifier la bonne extraction de l'information.
+    
+    J'ai appris les points suivants.
+    1. Comment tracer d'un diagramme logarithmique.
+    2. Comment améliorer la résolution d'un graphique matplolib
+    3. Comment sauvegarder ce graphique et avec quelle résolution.
+    
+    
+
+
+Leçons
+
+le swap a, b = b, ane fonctionne pas avec numpy
+
+
+time python yourprogram.py fonctionne sur Linux pur donner le temps d'execution 
+avec un résultat précis. 
+
+
+Relire cet article sur l'emploi d'un module plus précis pour mesurer le temps de calcul 
+et les optmisations possibles.
+
+https://blog.paperspace.com/numpy-optimization-vectorization-and-broadcasting/amp/
+------
+Pour tester un code LDPC.
+
+D'abord débuter sur des graphes très simples, dans mon cas, un cas 4, 8.
+S'assurer d'avoir toutes les bonnes connexions. 
+Placer un message à envoyer
+
+
+
+-------------------------------------
+
+Liens vidés du navigateur. 
+
+Calcul log, algo de Remez ici: 
+https://en.wikipedia.org/wiki/Approximation_theory
+
+Impléemntation des fonctions maths sur Python
+https://github.com/python/cpython/blob/main/Modules/mathmodule.c
+
+
+Nombre aléatoires: methode de box-muller, Methode Zigourat
+
+Multiprocessing: https://stackoverflow.com/questions/17377426/shared-variable-in-pythons-multiprocessing
+https://towardsdatascience.com/demystifying-python-multiprocessing-and-multithreading-9b62f9875a27#:~:text=Key%20Takeaways,the%20use%20of%20multiple%20cores.
+
+Mesure de performances
+https://stackoverflow.com/questions/1557571/how-do-i-get-time-of-a-python-programs-execution
+
+
+
+
+
+
+
+

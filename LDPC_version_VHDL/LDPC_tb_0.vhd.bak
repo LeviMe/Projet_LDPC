@@ -1,0 +1,117 @@
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.std_logic_textio.all;
+use std.textio.all;
+
+entity LDPC_tb_0 is 
+end LDPC_tb_0; 
+
+
+architecture tb of LDPC_tb_0 is 
+
+signal input :std_logic_vector(127 downto 0); 
+signal output : std_logic_vector(255 downto 0); 
+signal var_test : std_logic_vector(127 downto 0);
+
+  function f_BITWISE_XOR (
+    r_SLV_IN    : in std_logic_vector)
+    return std_logic is
+    variable v_XOR : std_logic := '0';
+  begin
+    for i in 0 to r_SLV_IN'length-1 loop
+      v_XOR := v_XOR xor r_SLV_IN(i);
+    end loop;
+    return v_XOR;
+     
+  end function f_BITWISE_XOR;
+ 
+ 	function shift_circ_r(
+		L: in std_logic_vector; index : in integer)
+		return std_logic_vector is
+		variable size: integer := L'Length;
+		variable res : std_logic_vector(size-1 downto 0) := (others => '0');
+		begin
+			--res := L(index-1 downto 0) & L(size - 1 downto index);
+			res := L(size-1-index downto 0) & L(size-1 downto size-index);
+		return res;
+		
+	end function shift_circ_r;
+ 
+
+	function shift_lr(
+		L: in std_logic_vector; index : in integer)
+		return std_logic_vector is
+		variable size: integer := L'Length;
+		variable res : std_logic_vector(size-1 downto 0) := (others => '0');
+		begin
+			res(size - 1 - index downto 0) :=  L(size - 1 downto index);
+		return res;
+		
+	end function shift_lr;
+	
+	function circular_perm4(L : in std_logic_vector; index : in integer :=0)
+	return  std_logic_vector is
+	
+	variable  res : std_logic_vector(127 downto 0);
+	variable  mot :  std_logic_vector(31 downto 0) := (others => '0');
+	variable  mot_per :  std_logic_vector(31 downto 0) := (others => '0');
+
+	begin 
+		decomp : for i in 0 to 3 loop --  la limite est incluse
+						mot := L((i+1)*32 -1 downto i*32); 
+						mot_per := shift_circ_r(mot, index); 
+						res((i+1)*32 -1 downto i*32) := mot_per;
+		end loop decomp;
+		return res;
+	end function;
+	
+
+begin 
+	testb: entity work.encoder port map (input=> input, output=> output); 
+	
+	testb_proc : process
+
+		variable vec_test : std_logic_vector(7 downto 0) := "01100000";
+		variable vec_test2 : std_logic_vector(30 to 37) := "01100000";
+		variable vec_res : std_logic_vector(127 downto 0) := (others => '0');
+		begin 
+		report "debut tb"; 
+
+		input <= x"7546f665fbf07eec75902581e7ebd072";
+
+		wait for 100 ns;
+		report "test";
+		wait for 100 ns;
+		report "test";
+		wait for 100 ns;
+		report "test";
+		
+--		report to_hstring(output);
+		-- test des colonnes de la matrice.
+		--for i in 0 to 10 loop
+		--		wait for 100 ns;
+		--		vec_res := circular_perm4(input, i);
+		--		report to_hstring(vec_res);
+		--end loop;
+		
+--		vec_res := circular_perm4(input, 8);
+--		
+--		vec_test2 := vec_test; -- & '1';
+--		wait for 100 ns;
+--		report to_bstring(vec_test2 xor vec_test);
+--		wait for 100 ns;	
+--		report integer'image(vec_test'left);
+		--report std_logic'image(vec_test2(0));
+
+		--	report to_hstring(input);
+		wait for 100 ns;
+		assert false severity failure; 
+		
+		
+		
+	end process; 
+	
+end tb;
+		
