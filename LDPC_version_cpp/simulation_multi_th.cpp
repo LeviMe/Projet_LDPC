@@ -30,7 +30,7 @@ void* run_simulation_point(void* arg) {
   double req_f = args->req_f;
   int m = args->m; int n = args->n; int k=n-m;
   
-  LDPC_decoder D = LDPC_decoder(args->decoder); // PLACER UN COPY CONSTRUCTOR SUR CES DEUX ARGUMENTS
+  LDPC_decoder D = LDPC_decoder(args->decoder);
   Encoder E = args->encoder;
 
   double sigma2 = sigma*sigma;
@@ -168,17 +168,4 @@ int main() {
 	simulation();
 return 0;
 }**/
-
-
-/**
-1. Add a copy constructor for the ThreadArgs struct to prevent shallow copies of the LDPC_decoder and Encoder objects.
-2. Replace the raw pointers for storing data with std::unique_ptr or std::shared_ptr.
-3. Replace the pthread library with the C++11 thread library.
-5. Change the variable names to be more descriptive and consistent.
-6. Add appropriate comments for clarity.
-7. Use the C++ string library instead of the C string library.
-9. Use the C++11 chrono library instead of sys/wait.h.
-10. Use the C++11 type safety features instead of type casting.
-**/
-
 
