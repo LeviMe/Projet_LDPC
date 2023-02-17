@@ -308,10 +308,7 @@ void LDPC_decoder::update_VN(){
 	}
 }
 
-/*
- * This code does not have any memory leaks because it does not allocate any dynamic memory
- * using new. Instead, it uses local arrays that are automatically deallocated when the function returns.
- */
+
 bool LDPC_decoder::check_codeword() {
 	int vec[n_];
 	for (int i = 0; i < n_; i++) {
