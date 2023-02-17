@@ -32,8 +32,7 @@ begin
 end behavioral;
 
 
--- the following VHDL module doesn't meet timing requirements with a clock running at 1000 Mhz. 
--- Write a corrected version that meets those requirements.
+
 --library ieee; 
 --use ieee.std_logic_1164.all;
 --use std.textio.all;
