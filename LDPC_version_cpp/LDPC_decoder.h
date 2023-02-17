@@ -7,7 +7,6 @@
 
 using namespace std;
 
-//Write a proper default constructor for the following class
 class VN {
 private:
  int index_;
@@ -30,7 +29,6 @@ private:
 };
 
 
-// for this one, pls
 class CN {
  public:
 	  int index_;
